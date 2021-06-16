@@ -89,7 +89,7 @@ export default {
 
       // this.$http.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 
-      this.$refs.loginData.validate(async valid => {
+      this.$refs.loginData.validate(async (valid) => {
         if (!valid) return
 
         // const { data: res } = await this.$http.post('login', this.loginForm)
@@ -97,8 +97,9 @@ export default {
         // if (res.meta.status !== 200) {
         //   return this.$message.error('login failed!')
         // }
+
         this.$message.success('login success!')
-        window.sessionStorage.setItem('token', 'theTokenFromServer')
+        // window.sessionStorage.setItem('token', res.data.token)
 
         this.$router.push('/home')
       })

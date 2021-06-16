@@ -4,49 +4,37 @@
     <el-header>
       <div>
         <img src="../assets/logo1.png" alt="" />
-        <span>online food order system</span>
+        <span>Online food order system</span>
       </div>
       <el-button type="info" @click="logout">exit</el-button>
     </el-header>
     <!-- main area -->
     <el-container>
       <!-- aside area -->
-      <el-aside :width="isCollpase ? '64px' : '200px'">
+      <el-aside :width="isCollpase ? '64px' : '210px'">
         <div class="toggle-button" @click="toggleCollapse">|||</div>
         <!-- left side bar -->
-        <el-menu
-          background-color="#545c65"
-          text-color="#fff"
-          active-text-color="#409EFF"
-          unique-opened
-          :collapse="isCollpase"
-          :collapse-transition="false"
-          router
-          :default-active="activePath"
-        >
-          <!-- level 1 menu -->
-          <el-submenu
-            :index="item.id + ''"
-            v-for="item in menulist"
-            :key="item.id"
-          >
-            <!-- the template for level 1 menu -->
+        <el-menu default-active="2">
+          <el-submenu index="1">
             <template slot="title">
-              <i :class="iconsObj[item.id]"></i>
-              <span> {{ item.authName }} </span>
+              <i class="el-icon-setting"></i>
+              <span>Order Management</span>
             </template>
-            <!-- level 2 menu -->
-            <el-menu-item
-              :index="'/' + subItem.path"
-              v-for="subItem in item.children"
-              :key="subItem.id"
-              @click="saveNavState(subItem.path)"
-            >
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>{{ subItem.authName }}</span>
-              </template>
-            </el-menu-item>
+            <el-menu-item-group>
+              <el-menu-item class="el-icon-menu" index="1-1">All The Orders</el-menu-item>
+              <el-menu-item class="el-icon-menu" index="1-2">Orders Modification</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
+          <el-submenu index="2">
+            <template slot="title">
+              <i class="el-icon-setting"></i>
+              <span>Personal Management</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item class="el-icon-menu" index="1-1">Basic Info</el-menu-item>
+              <el-menu-item class="el-icon-menu" index="1-2">Security</el-menu-item>
+            </el-menu-item-group>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -81,13 +69,13 @@ export default {
   },
   methods: {
     logout() {
-      window.sessionStorage.clear()
+      // window.sessionStorage.clear()
       this.$router.push('/login')
     },
-    async getMenuList() {
-      const { data: res } = await this.$http.get('menus')
-      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
-      this.menulist = res.data
+    getMenuList() {
+      // const { data: res } = await this.$http.get('menus')
+      // if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      // this.menulist = res.data
     },
     toggleCollapse() {
       this.isCollpase = !this.isCollpase
