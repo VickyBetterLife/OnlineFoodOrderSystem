@@ -16,12 +16,12 @@
             placeholder="请输入内容"
             v-model="queryInfo.query"
             clearable
-            @clear="getOrders"
+            @clear="getOrderlist"
           >
             <el-button
               slot="append"
               icon="el-icon-search"
-              @click="getUserList"
+              @click="getOrderlist"
             ></el-button>
           </el-input>
         </el-col>
@@ -32,8 +32,8 @@
         </el-col>
       </el-row>
 
-      <el-table :data="orderlist" border stripe>
-        <el-table-column type="index"></el-table-column>
+      <el-table id="orderlist" border stripe>
+        <!-- <el-table-column type="index"></el-table-column>
         <el-table-column label="customer" prop="customer"></el-table-column>
         <el-table-column
           label="destination"
@@ -46,7 +46,7 @@
         <el-table-column
           label="sent_at_second"
           prop="sent_at_second"
-        ></el-table-column>
+        ></el-table-column> -->
       </el-table>
 
       <el-pagination
@@ -60,7 +60,6 @@
       >
       </el-pagination>
     </el-card>
-
   </div>
 </template>
 
@@ -70,7 +69,7 @@ export default {
     return {
       queryInfo: {
         query: '',
-        pagenum: 1,
+        pagenum: 5,
         pagesize: 2
       },
       orderlist: [],
@@ -78,11 +77,36 @@ export default {
       dialogVisible: false
     }
   },
-  created() {
-    this.getOrders()
+  mounted() {
+    this.getOrderlist()
   },
   methods: {
-    getOrders() {
+    getOrderlist() {
+      setTimeout(() => {
+        console.log('length:', this.$allOrders.length)
+        if (this.$allOrders.length <= 0) {
+          this.getOrderlist()
+          return
+        }
+        console.log('getOrderList')
+        const curData = this.$allOrders[0]
+        this.total = curData.length
+        console.log('curData:', JSON.stringify(curData))
+        this.$allOrders.shift()
+        const ul = document.getElementById('orderlist')
+        const fragment = document.createDocumentFragment()
+        for (let i = 0; i < this.queryInfo.pagesize; i++) {
+          const li = document.createElement('li')
+          li.innerText = curData[i].id
+          fragment.appendChild(li)
+        }
+        ul.appendChild(fragment)
+        //  window.requestAnimationFrame(insertElement)
+      }, 0)
+
+      // this.orderlist = this.$currentData
+      // console.log('orderlist:' + JSON.stringify(this.$currentData))
+      /*
       this.orderlist = [
         {
           customer: 'Joel Heath',
@@ -121,39 +145,25 @@ export default {
           sent_at_second: 116
         }
       ]
+      */
       this.total = this.orderlist.length
     },
-    handleSizeChange(newSize) {
-      console.log(newSize)
-      this.queryInfo.pagesize = newSize
-      this.getOrders()
-    },
+    // handleSizeChange(newSize) {
+    //   console.log('size:' + newSize)
+    //   this.queryInfo.pagesize = newSize
+    //   this.getOrderlist()
+    // },
     handleCurrentChange(newPage) {
       this.queryInfo.pagenum = newPage
-    },
-    async userStateChanged(userinfo) {
-      console.log(userinfo)
-      const { data: res } = await this.$http.put(
-        `users/${userinfo.id}/state/${userinfo.mg_state}`
-      )
-      if (res.meta.status !== 200) {
-        userinfo.mg_state = !userinfo.mg_state
-        return this.$message.error('Put user status fail!')
-      }
-      console.log(res)
-      this.$message.success('Put user status success!')
-    },
-    dialogClosed() {
-      this.$refs.addFormRef.resetFields()
+      this.getOrderlist()
     },
     async addUser() {
       const { data: res } = await this.$http.post('users', this.addForm)
       if (res.meta.status !== 201) return this.$message.error('add user fail')
       this.$message.success('add user successfully')
       this.dialogVisible = false
-      this.getOrders()
+      this.getOrderlist()
     }
-
   }
 }
 </script>

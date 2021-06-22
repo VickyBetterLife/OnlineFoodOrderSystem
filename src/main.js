@@ -23,9 +23,21 @@ axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 const socketio = io('http://localhost:4000')
 
 Vue.prototype.$http = axios
-Vue.prototype.$socketio = socketio
 
 Vue.config.productionTip = false
+
+var allOrders = []
+
+socketio.on('order_event', function (data) {
+  allOrders.push(data)
+  console.log('allOrders:' + allOrders.length)
+})
+
+const ul = document.getElementById('orderlist')
+console.log('ul:', JSON.stringify(ul))
+
+Vue.prototype.$socketio = socketio
+Vue.prototype.$allOrders = allOrders
 
 new Vue({
   router,
